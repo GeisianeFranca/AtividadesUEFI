@@ -1,0 +1,8 @@
+[Defines]
+  DEC_SPECIFICATION = 0x00010005
+  PACKAGE_NAME = TesteUefiPkg
+  PACKAGE_GUID = 99f89bc3-db49-4798-845b-a54b0a8aaffa
+  PACKAGE_VERSION = 0.1
+
+[Includes]
+  Include

@@ -1,0 +1,35 @@
+[Defines]
+  INF_VERSION = 0x00010005
+  BASE_NAME = DeleteDir
+  FILE_GUID = a548299c-c4cf-48c1-a1ea-cd8e98afe430
+  MODULE_TYPE = UEFI_APPLICATION
+  VERSION_STRING = 1.0
+  UEFI_SPECIFICATION_VERSION = 0x0002001E
+  ENTRY_POINT = UefiMain
+
+[Sources]
+  DeleteDir.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  BootHealthPkg/BootHealthPkg.dec
+
+[LibraryClasses]
+  UefiApplicationEntryPoint
+  UefiBootServicesTableLib
+  BaseLib
+  DebugLib
+  UefiLib
+  MemoryAllocationLib
+  BaseMemoryLib
+
+[Protocols]
+  gEfiSimpleFileSystemProtocolGuid
+  gNtfsProtocolGuid
+
+[Guids]
+    gEfiFileInfoGuid
+    gEfiFileSystemInfoGuid
+    gEfiFileSystemVolumeLabelInfoIdGuid
+    gNtfsDriverTagGuid

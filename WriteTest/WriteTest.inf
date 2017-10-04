@@ -1,0 +1,35 @@
+[Defines]
+  INF_VERSION = 0x00010005
+  BASE_NAME = WriteTeste
+  FILE_GUID = 7712fb6c-d36a-4036-8dbc-93561236f293
+  MODULE_TYPE = UEFI_APPLICATION
+  VERSION_STRING = 1.0
+  UEFI_SPECIFICATION_VERSION = 0x0002001E
+  ENTRY_POINT = UefiMain
+
+[Sources]
+  WriteTest.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  BootHealthPkg/BootHealthPkg.dec
+
+[LibraryClasses]
+  UefiApplicationEntryPoint
+  UefiBootServicesTableLib
+  BaseLib
+  DebugLib
+  UefiLib
+  MemoryAllocationLib
+  BaseMemoryLib
+
+[Protocols]
+  gEfiSimpleFileSystemProtocolGuid
+  gNtfsProtocolGuid
+
+[Guids]
+    gEfiFileInfoGuid
+    gEfiFileSystemInfoGuid
+    gEfiFileSystemVolumeLabelInfoIdGuid
+    gNtfsDriverTagGuid

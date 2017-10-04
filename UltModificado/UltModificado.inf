@@ -1,0 +1,35 @@
+[Defines]
+  INF_VERSION = 0x00010005
+  BASE_NAME = UltimoModificado
+  FILE_GUID = ee251964-fd5c-4b10-979f-e4fea5d1cce1
+  MODULE_TYPE = UEFI_APPLICATION
+  VERSION_STRING = 1.0
+  UEFI_SPECIFICATION_VERSION = 0x0002001E
+  ENTRY_POINT = UefiMain
+
+[Sources]
+  UltModificado.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  BootHealthPkg/BootHealthPkg.dec
+
+[LibraryClasses]
+  UefiApplicationEntryPoint
+  UefiBootServicesTableLib
+  BaseLib
+  DebugLib
+  UefiLib
+  MemoryAllocationLib
+  BaseMemoryLib
+
+[Protocols]
+  gEfiSimpleFileSystemProtocolGuid
+  gNtfsProtocolGuid
+
+[Guids]
+    gEfiFileInfoGuid
+    gEfiFileSystemInfoGuid
+    gEfiFileSystemVolumeLabelInfoIdGuid
+    gNtfsDriverTagGuid

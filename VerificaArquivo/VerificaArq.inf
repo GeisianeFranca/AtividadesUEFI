@@ -1,0 +1,19 @@
+[Defines]
+  MODULE_TYPE = UEFI_APPLICATION
+  INF_VERSION = 0x00010006
+  BASE_NAME = VerificaArq
+  VERSION_STRING = 0.1
+  FILE_GUID = ddd7c07b-ad6a-4581-95a3-af757b628621
+  ENTRY_POINT = UefiMain
+
+[Sources]
+  VerificaArq.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ShellPkg/ShellPkg.dec
+
+[LibraryClasses]
+  UefiLib
+  UefiApplicationEntryPoint
+
