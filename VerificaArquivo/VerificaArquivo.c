@@ -56,7 +56,7 @@ UefiMain (
       Status = RootDir->Open(
               RootDir,
               &File,
-              L"WriteTeste.efi",
+              L"WriteTeste",
               EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE,
               0);
       if(Status != EFI_NOT_FOUND){

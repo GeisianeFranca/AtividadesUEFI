@@ -69,6 +69,7 @@ for(IndexHandle = 0; IndexHandle<BufferSize; IndexHandle++){
               0);
     if (EFI_ERROR(Status)) {
         Print(L"Could not open File : %r\n", Status);
+        goto close_root;
     }
     if (Status != EFI_NOT_FOUND) {
         Status = RootDir->Open(
@@ -79,6 +80,7 @@ for(IndexHandle = 0; IndexHandle<BufferSize; IndexHandle++){
                   0);
         if (EFI_ERROR(Status)) {
             Print(L"Could not open File : %r\n", Status);
+            goto close_root;
         }
         if (Status != EFI_NOT_FOUND) {
               break;
@@ -92,6 +94,7 @@ while(1){
   Status = FileConf->Read(FileConf,&BufferSize,BufferTemp);
   if (EFI_ERROR(Status)) {
       Print(L"Could not read file: %r\n", Status);
+      goto close_file;
   }
   BufferTemp[1] = '\0';
    if(*BufferTemp == '\n' && *Buffer != '\0'){
@@ -105,6 +108,7 @@ while(1){
                 0);
       if (EFI_ERROR(Status)) {
           Print(L"Could not open File : %r\n", Status);
+          goto close_filePath;
       }
       else{
         Status = FPath->Delete(FPath);
@@ -123,6 +127,14 @@ while(1){
         break;
 }
 
+close_filePath:
+    FPath->Close(FPath);
+
+close_file:
+    File->Close(File);
+
+close_root:
+    RootDir->Close(RootDir);
 
 close_fs:
   gBS->CloseProtocol(
