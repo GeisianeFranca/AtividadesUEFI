@@ -24,10 +24,6 @@ UefiMain (
     EFI_FILE_INFO *Buffer = AllocatePool(SIZE_OF_EFI_FILE_INFO+512*sizeof(CHAR16));
     EFI_FILE_INFO *LastModification = AllocateZeroPool(SIZE_OF_EFI_FILE_INFO+512*sizeof(CHAR16));
 
-    // EFI_FILE_INFO LastModification;
-    //
-    // ZeroMem(LastModification, sizeof(EFI_FILE_INFO));
-
     Status = gBS->LocateHandleBuffer(
       ByProtocol,
       &gEfiSimpleFileSystemProtocolGuid,
@@ -66,31 +62,40 @@ UefiMain (
           break;
         }
 
-        Print(L"ModificationTime: %t\n", Buffer->ModificationTime);
-         if(LastModification->ModificationTime.Year < Buffer->ModificationTime.Year){
-           LastModification = Buffer;
-         }
-         else if(LastModification->ModificationTime.Month < Buffer->ModificationTime.Month){
-           LastModification = Buffer;
+        if(LastModification->ModificationTime.Year < Buffer->ModificationTime.Year){
+           *LastModification = *Buffer;
+           StrCpy(LastModification->FileName, Buffer->FileName);
+        }
+        else if(LastModification->ModificationTime.Year == Buffer->ModificationTime.Year){
+          if(LastModification->ModificationTime.Month < Buffer->ModificationTime.Month){
+            *LastModification = *Buffer;
+            StrCpy(LastModification->FileName, Buffer->FileName);
+          }
+          else if(LastModification->ModificationTime.Month == Buffer->ModificationTime.Month){
+            if(LastModification->ModificationTime.Day < Buffer->ModificationTime.Day){
+              *LastModification = *Buffer;
+              StrCpy(LastModification->FileName, Buffer->FileName);
             }
-            else if(LastModification->ModificationTime.Month == Buffer->ModificationTime.Month){
-              if(LastModification->ModificationTime.Day < Buffer->ModificationTime.Day){
-                LastModification = Buffer;
+            else if(LastModification->ModificationTime.Day == Buffer->ModificationTime.Day){
+              if(LastModification->ModificationTime.Hour < Buffer->ModificationTime.Hour){
+                *LastModification = *Buffer;
+                StrCpy(LastModification->FileName, Buffer->FileName);
               }
-              else if(LastModification->ModificationTime.Day == Buffer->ModificationTime.Day){
-                if(LastModification->ModificationTime.Hour < Buffer->ModificationTime.Hour){
-                  LastModification = Buffer;
+              else if(LastModification->ModificationTime.Hour == Buffer->ModificationTime.Hour){
+                if(LastModification->ModificationTime.Minute < Buffer->ModificationTime.Minute){
+                  *LastModification = *Buffer;
+                  StrCpy(LastModification->FileName, Buffer->FileName);
                 }
-                else if(LastModification->ModificationTime.Hour == Buffer->ModificationTime.Hour){
-                  if(LastModification->ModificationTime.Minute < Buffer->ModificationTime.Minute){
-                    LastModification = Buffer;
+                  else if(LastModification->ModificationTime.Minute == Buffer->ModificationTime.Minute){
+                    if(LastModification->ModificationTime.Second < Buffer->ModificationTime.Second){
+                      *LastModification = *Buffer;
+                      StrCpy(LastModification->FileName, Buffer->FileName);
+                      }
                   }
-                }
-
               }
-
-
             }
+          }
+        }
       }
     }
 
