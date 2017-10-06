@@ -67,9 +67,14 @@ UefiMain (
         goto close_root;
     }
 
+    //   BufferSize = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
+    // File->GetInfo(File, &gEfiFileInfoGuid, &BufferSize, Buffer);
+    //   Print(L"Att:%x\n",Buffer->Attribute);
 
-
-
+    // CHAR16 Teste4;
+    // CHAR8 * Teste3 = (CHAR8 *)"..\0";
+    // CHAR8 * Teste2 = (CHAR8 *)"..\0";
+    // CHAR16 Teste;
     while(TRUE){
       BufferSize = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
       Status = File->Read(File, &BufferSize, (VOID*) Buffer);
@@ -77,8 +82,11 @@ UefiMain (
           goto close_file;
           break;
         }
-        Print(L"%s\n", Buffer->FileName);
-
+      // AsciiStrToUnicodeStr(Teste2, &Teste);
+      // AsciiStrToUnicodeStr(Teste3, &Teste4);
+      // if(StrCmp(Buffer->FileName, &Teste) && StrCmp(Buffer->FileName, &Teste4))
+      //if(Buffer->Attribute == EFI_FILE_DIRECTORY)
+        Print(L"%s\n",Buffer->FileName);
     }
 
 

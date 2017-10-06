@@ -28,3 +28,4 @@
   TesteUefiPkg/DeleteDir/DeleteDir.inf
   TesteUefiPkg/VerificaArquivo/VerificaArquivo.inf
   TesteUefiPkg/UltModificado/UltModificado.inf
+  TesteUefiPkg/LsRecursivo/LsRecursivo.inf
