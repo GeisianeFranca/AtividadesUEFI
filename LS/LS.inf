@@ -1,0 +1,35 @@
+[Defines]
+  INF_VERSION = 0x00010005
+  BASE_NAME = LS
+  FILE_GUID = 25c45125-22a3-4ea2-9d10-3bff4e004e21
+  MODULE_TYPE = UEFI_APPLICATION
+  VERSION_STRING = 1.0
+  UEFI_SPECIFICATION_VERSION = 0x0002001E
+  ENTRY_POINT = UefiMain
+
+[Sources]
+  LS.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  BootHealthPkg/BootHealthPkg.dec
+
+[LibraryClasses]
+  UefiApplicationEntryPoint
+  UefiBootServicesTableLib
+  BaseLib
+  DebugLib
+  UefiLib
+  MemoryAllocationLib
+  BaseMemoryLib
+
+[Protocols]
+  gEfiSimpleFileSystemProtocolGuid
+  gNtfsProtocolGuid
+
+[Guids]
+    gEfiFileInfoGuid
+    gEfiFileSystemInfoGuid
+    gEfiFileSystemVolumeLabelInfoIdGuid
+    gNtfsDriverTagGuid

@@ -6,99 +6,6 @@
 #include <Guid/FileInfo.h>
 #include <Library/MemoryAllocationLib.h>
 
-
-
- // EFI_FILE_PROTOCOL LsRec(EFI_FILE_PROTOCOL *File){
- //   CHAR16 *Teste = AllocatePool(1024*sizeof(CHAR16));
- //   if(!IsDir(File))
- //      return File;
- //  return ;
- // }
-
-CHAR16* teste(EFI_FILE_PROTOCOL *File, EFI_FILE_PROTOCOL *RootDir){
-  CHAR16 *var = AllocateZeroPool(sizeof(CHAR16)*512);
-  EFI_STATUS Status= EFI_SUCCESS;
-  UINTN BufferSize = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
-  EFI_FILE_INFO *Buffer = AllocatePool(SIZE_OF_EFI_FILE_INFO+512*sizeof(CHAR16));
-  EFI_FILE_INFO *BufferAux = AllocatePool(SIZE_OF_EFI_FILE_INFO+512*sizeof(CHAR16));
-  EFI_FILE_PROTOCOL *FileAux = NULL;
-  File->GetInfo(File, &gEfiFileInfoGuid, &BufferSize, Buffer);
-  Buffer->FileName[BufferSize] = '/';
-  Buffer->FileName[BufferSize+1] = '\0';
-  if(Buffer->Attribute == EFI_FILE_ARCHIVE){
-    var = StrCat(StrCat(var, Buffer->FileName),(CHAR16*)"/\0");
-      Print(L"Var: %s\n", var);
-    return var;
-  }
-  else{
-    if(Buffer->Attribute == EFI_FILE_DIRECTORY){
-      while(TRUE){
-        BufferSize = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
-        //BufferAux[BufferSize]
-        Status = File->Read(File, &BufferSize, BufferAux);
-        if (EFI_ERROR(Status)) {
-            Print(L"Could not read directory: %r\n", Status);
-            File->Close(File);
-            return (CHAR16*)Status;
-          }
-        Print(L"BufferAux: %s\n", BufferAux->FileName);
-        while(!StrCmp(BufferAux->FileName, (CHAR16*)"..") && !StrCmp(BufferAux->FileName, (CHAR16*)".")){
-            Status = RootDir->Open(
-              RootDir,
-              &FileAux,
-              BufferAux->FileName,
-              EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE,
-            0);
-
-          if (EFI_ERROR(Status)) {
-              Print(L"Could not open directory: %r\n", Status);
-              RootDir->Close(RootDir);
-              return (CHAR16*)Status;
-          }
-          BufferAux->FileName[BufferSize] = '/';
-          BufferAux->FileName[BufferSize+1] = '\0';
-          var = StrCat(var, StrCat(Buffer->FileName, (CHAR16*)"/\0"));
-          return StrCat(var, teste(FileAux, File));
-        }
-        if(EFI_ERROR(Status)|| BufferSize==0){
-          File->Close(File);
-          break;
-        }
-      }
-
-
-      //var = StrCat(StrCat(var, Buffer->FileName),(CHAR16*)"/\0");
-      //return var;
-    }
-    // if(Buffer->Attribute == EFI_FILE_DIRECTORY){
-    //   BufferSize = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
-    //   Status = File->Read(File, &BufferSize, BufferAux);
-    //   if (EFI_ERROR(Status)) {
-    //       Print(L"Could not read file: %r\n", Status);
-    //   }
-    //   RootDir->Open(
-    //     RootDir,
-    //     &FileAux,
-    //     (VOID*)BufferAux,
-    //     EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE,
-    //     0);
-    //     if (EFI_ERROR(Status)) {
-    //         Print(L"Could not open directory: %r\n", Status);
-    //         RootDir->Close(RootDir);
-    //         return (CHAR16*)Status;
-    //     }
-    //
-    //   var = StrCat(var,(CHAR16*)BufferAux->Attribute);
-    //
-    //   return StrCat(var,teste(FileAux, RootDir));
-    // }
-    return var;
-  }
-
-
-
-}
-
 EFI_STATUS
 EFIAPI
 UefiMain (
@@ -110,13 +17,14 @@ UefiMain (
   UINTN NHandles;
   EFI_HANDLE *BufferHandle = NULL;
   UINTN BufferSize;
+  UINTN BufferSize2;
   UINTN IndexHandle = 0;
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystem = NULL;
   EFI_FILE_PROTOCOL *RootDir = NULL;
   EFI_FILE_PROTOCOL *File = NULL;
-//  EFI_FILE_PROTOCOL *Aux = NULL;
-  //EFI_FILE_INFO *Buffer = AllocatePool(SIZE_OF_EFI_FILE_INFO+512*sizeof(CHAR16));
-  //EFI_FILE_INFO *Buffer2 = AllocatePool(SIZE_OF_EFI_FILE_INFO+512*sizeof(CHAR16));
+  EFI_FILE_PROTOCOL *FileAux = NULL;
+  EFI_FILE_INFO *Buffer = AllocateZeroPool(SIZE_OF_EFI_FILE_INFO+512*sizeof(CHAR16));
+  EFI_FILE_INFO *Buffer2 = AllocateZeroPool(SIZE_OF_EFI_FILE_INFO+512*sizeof(CHAR16));
 
   Status = gBS->LocateHandleBuffer(
     ByProtocol,
@@ -132,7 +40,7 @@ UefiMain (
       Print(L"Could not find any NTFS volume: %r\n", Status);
       goto bottom;
   }
-CHAR16* b = AllocateZeroPool(sizeof(CHAR16)*512);
+//CHAR16* b = AllocateZeroPool(sizeof(CHAR16)*512);
   while(IndexHandle < NHandles){
     Status = gBS->OpenProtocol(
       BufferHandle[IndexHandle],
@@ -162,54 +70,61 @@ CHAR16* b = AllocateZeroPool(sizeof(CHAR16)*512);
         Print(L"Could not open directory: %r\n", Status);
         goto close_root;
     }
+    while(TRUE){
+      BufferSize = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
+      Status = File->GetInfo(File, &gEfiFileInfoGuid, &BufferSize, (VOID*)Buffer);
+      if(Buffer->Attribute == EFI_FILE_ARCHIVE){
+        Print(L"%s\n", Buffer->FileName);
+        break;
+      }
+      else{
+        while(Buffer->Attribute == EFI_FILE_DIRECTORY){
+          BufferSize2 = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
+          Buffer->FileName[BufferSize]  = '\0';
+          Print(L"%s\n", Buffer->FileName);
 
-    b = teste(File, RootDir);
-    Print(L"%s\n", b);
+            Print(L"Comp1: %d\n", StrCmp(Buffer->FileName,(CHAR16* )".."));
+            Print(L"Comp2: %d\n", StrCmp(Buffer->FileName,(CHAR16* )"."));
+            Print(L"Buffer:%s/", Buffer->FileName);
+            Print(L"Comp3: %d\n", StrCmp(Buffer->FileName,(CHAR16*)"RC\0")) ;
+
+            if(StrCmp(Buffer->FileName,(CHAR16* )"..\0") != 0 && StrCmp(Buffer->FileName,(CHAR16* )".\0") != 0){
+              Print(L"%s/", Buffer->FileName);
+              Status = RootDir->Read(RootDir, &BufferSize2, Buffer2);
+              if(EFI_ERROR(Status)){
+                Print(L"Não foi possível ler o arquivo%r\n", Status);
+                break;
+              }
+              Buffer = Buffer2;
+              continue;
+              if(Buffer2->Attribute == EFI_FILE_ARCHIVE){
+                Print(L"%s\n", Buffer2->FileName);
+                break;
+              }
+              Status = RootDir->Open(RootDir, &FileAux,Buffer->FileName, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE,0);
+              if(EFI_ERROR(Status)){
+                Print(L"Não foi possível abrir o arquivo %r\n", Status);
+                break;
+              }
+              Buffer = Buffer2;
+          }
+          else{
+            Print(L":()");
+          }
+          if(BufferSize2 == 0){
+            break;
+          }
+          break;
+        }
+
+      }
+      if(BufferSize == 0)
+        break;
+
+      break;
+    }
     IndexHandle++;
-    // CHAR8 * Dir1 = (CHAR8 *)".\0";
-    // CHAR8 * Dir2 = (CHAR8 *)"..\0";
-    // CHAR16 Dir1_16;
-    // CHAR16 Dir2_16;
-    // AsciiStrToUnicodeStr(Dir1, &Dir1_16);
-    // AsciiStrToUnicodeStr(Dir2, &Dir2_16);
-    // while(TRUE){
-    //   BufferSize = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
-    //   Status = File->Read(File, &BufferSize, (VOID*) Buffer);
-    //     if(EFI_ERROR(Status)|| BufferSize==0){
-    //       goto close_file;
-    //       break;
-    //     }
-    //     if(Buffer->Attribute == EFI_FILE_DIRECTORY){
-    //       Status = RootDir->Open(
-    //               RootDir,
-    //               &Aux,
-    //               Buffer->FileName,
-    //               EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE,
-    //               0);
-    //       if (EFI_ERROR(Status)) {
-    //           Print(L"Could not open directory: %r\n", Status);
-    //           goto close_root;
-    //       }
-    //       while(TRUE){
-    //         BufferSize = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
-    //         if(!(StrCmp(Buffer->FileName, &Dir1_16) && StrCmp(Buffer->FileName, &Dir2_16))){
-    //           Status = Aux->Read(Aux, &BufferSize, (VOID*) Buffer2);
-    //           if(EFI_ERROR(Status)|| BufferSize==0){
-    //             goto close_file;
-    //             break;
-    //           }
-    //             Print(L"%s/%s\n",Buffer->FileName, Buffer2->FileName);
-    //         }
-    //
-    //       }
-    //     }
-    //       Print(L"%s\n",Buffer->FileName);
-    // }
   }
-
-  // close_file:
-  //   File->Close(File);
-
   close_root:
       RootDir->Close(RootDir);
 
