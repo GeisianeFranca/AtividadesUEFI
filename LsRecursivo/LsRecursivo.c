@@ -6,6 +6,41 @@
 #include <Guid/FileInfo.h>
 #include <Library/MemoryAllocationLib.h>
 
+VOID LsRecursivo(EFI_FILE_PROTOCOL *File, CHAR16 *Path){
+  EFI_FILE_PROTOCOL* FileAux = NULL;
+  CHAR16 *Temp = AllocateZeroPool(512*sizeof(CHAR16));
+  UINTN BufferSize;
+  EFI_FILE_INFO *Buffer = AllocateZeroPool(SIZE_OF_EFI_FILE_INFO+512*sizeof(CHAR16));
+  EFI_STATUS Status = EFI_SUCCESS;
+  while(TRUE){
+    BufferSize = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
+    Status = File->Read(File, &BufferSize, (VOID*) Buffer);
+    if(EFI_ERROR(Status)|| BufferSize==0){
+      goto close_file;
+    }
+    if((StrCmp(Buffer->FileName, (CHAR16*)L"..") == 0 || StrCmp(Buffer->FileName, (CHAR16*)L".") == 0)){
+      continue;
+    }
+    FreePool(Temp);
+    Temp = AllocateZeroPool(512*sizeof(CHAR16));
+    StrCat(Temp,Path);
+    StrCat(Temp,Buffer->FileName);
+    Print(L"%s\n",Temp);
+    if((Buffer->Attribute & EFI_FILE_DIRECTORY )== EFI_FILE_DIRECTORY){
+      Status = File->Open(File,&FileAux, Buffer->FileName, EFI_FILE_MODE_READ,0);
+      if(EFI_ERROR(Status)){
+        goto close_file;
+      }
+      LsRecursivo(FileAux,StrCat(Temp, L"/"));
+    }
+  }
+  close_file:
+      File->Close(File);
+      if(Temp != NULL){
+        FreePool(Temp);
+      }
+}
+
 EFI_STATUS
 EFIAPI
 UefiMain (
@@ -17,14 +52,9 @@ UefiMain (
   UINTN NHandles;
   EFI_HANDLE *BufferHandle = NULL;
   UINTN BufferSize;
-  UINTN BufferSize2;
   UINTN IndexHandle = 0;
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystem = NULL;
   EFI_FILE_PROTOCOL *RootDir = NULL;
-  EFI_FILE_PROTOCOL *File = NULL;
-  EFI_FILE_PROTOCOL *FileAux = NULL;
-  EFI_FILE_INFO *Buffer = AllocateZeroPool(SIZE_OF_EFI_FILE_INFO+512*sizeof(CHAR16));
-  EFI_FILE_INFO *Buffer2 = AllocateZeroPool(SIZE_OF_EFI_FILE_INFO+512*sizeof(CHAR16));
 
   Status = gBS->LocateHandleBuffer(
     ByProtocol,
@@ -40,7 +70,6 @@ UefiMain (
       Print(L"Could not find any NTFS volume: %r\n", Status);
       goto bottom;
   }
-//CHAR16* b = AllocateZeroPool(sizeof(CHAR16)*512);
   while(IndexHandle < NHandles){
     Status = gBS->OpenProtocol(
       BufferHandle[IndexHandle],
@@ -60,73 +89,10 @@ UefiMain (
         goto close_fs;
     }
 
-    Status = RootDir->Open(
-            RootDir,
-            &File,
-            L"RC",
-            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE,
-            0);
-    if (EFI_ERROR(Status)) {
-        Print(L"Could not open directory: %r\n", Status);
-        goto close_root;
-    }
-    while(TRUE){
-      BufferSize = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
-      Status = File->GetInfo(File, &gEfiFileInfoGuid, &BufferSize, (VOID*)Buffer);
-      if(Buffer->Attribute == EFI_FILE_ARCHIVE){
-        Print(L"%s\n", Buffer->FileName);
-        break;
-      }
-      else{
-        while(Buffer->Attribute == EFI_FILE_DIRECTORY){
-          BufferSize2 = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
-          Buffer->FileName[BufferSize]  = '\0';
-          Print(L"%s\n", Buffer->FileName);
-
-            Print(L"Comp1: %d\n", StrCmp(Buffer->FileName,(CHAR16* )".."));
-            Print(L"Comp2: %d\n", StrCmp(Buffer->FileName,(CHAR16* )"."));
-            Print(L"Buffer:%s/", Buffer->FileName);
-            Print(L"Comp3: %d\n", StrCmp(Buffer->FileName,(CHAR16*)"RC\0")) ;
-
-            if(StrCmp(Buffer->FileName,(CHAR16* )"..\0") != 0 && StrCmp(Buffer->FileName,(CHAR16* )".\0") != 0){
-              Print(L"%s/", Buffer->FileName);
-              Status = RootDir->Read(RootDir, &BufferSize2, Buffer2);
-              if(EFI_ERROR(Status)){
-                Print(L"Não foi possível ler o arquivo%r\n", Status);
-                break;
-              }
-              Buffer = Buffer2;
-              continue;
-              if(Buffer2->Attribute == EFI_FILE_ARCHIVE){
-                Print(L"%s\n", Buffer2->FileName);
-                break;
-              }
-              Status = RootDir->Open(RootDir, &FileAux,Buffer->FileName, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE,0);
-              if(EFI_ERROR(Status)){
-                Print(L"Não foi possível abrir o arquivo %r\n", Status);
-                break;
-              }
-              Buffer = Buffer2;
-          }
-          else{
-            Print(L":()");
-          }
-          if(BufferSize2 == 0){
-            break;
-          }
-          break;
-        }
-
-      }
-      if(BufferSize == 0)
-        break;
-
-      break;
-    }
+    CHAR16* Path = (CHAR16*)"/\0";
+    LsRecursivo(RootDir, Path);
     IndexHandle++;
   }
-  close_root:
-      RootDir->Close(RootDir);
 
   close_fs:
     gBS->CloseProtocol(
