@@ -26,10 +26,6 @@ VOID Verifica(EFI_FILE_PROTOCOL *File, CHAR16 *Name){
     FreePool(Temp);
     Temp = AllocateZeroPool(512*sizeof(CHAR16));
 
-    //StrCat(Temp,Path);
-    //StrCat(Temp,Buffer->FileName);
-  //  Print(L"%s\n", Archive);
-
     if((Buffer->Attribute & EFI_FILE_DIRECTORY )== EFI_FILE_DIRECTORY){
       Status = File->Open(File,&FileAux, Buffer->FileName, EFI_FILE_MODE_READ,0);
       if(EFI_ERROR(Status)){
@@ -37,6 +33,7 @@ VOID Verifica(EFI_FILE_PROTOCOL *File, CHAR16 *Name){
       }
       Verifica(FileAux,Name);
     }else{
+      Print(L"%s", Buffer->FileName);
        if(StrCmp(Buffer->FileName, Name) == 0){
          qtdeFiles++;
        }
@@ -99,7 +96,7 @@ UefiMain (
       }
       CHAR16* Archive = L"teste\0";
       Verifica(RootDir, Archive);
-      Print(L"%d found files.\n",qtdeFiles);
+      Print(L"%d files found.\n",qtdeFiles);
       // Status = RootDir->Open(
       //         RootDir,
       //         &File,
