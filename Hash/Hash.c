@@ -7,7 +7,6 @@
 #include <Library/MemoryAllocationLib.h>
 
 
-
 EFI_STATUS
 EFIAPI
 UefiMain (
@@ -15,5 +14,5 @@ UefiMain (
     IN EFI_SYSTEM_TABLE  *SystemTable
 )
 {
-return EFI_SUCCESS;
+    return Status;
 }

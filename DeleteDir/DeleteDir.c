@@ -96,8 +96,10 @@ while(1){
       Print(L"Could not read file: %r\n", Status);
       goto close_file;
   }
+  if(BufferSize == 0)
+       break;
   BufferTemp[1] = '\0';
-   if(*BufferTemp == '\n' && *Buffer != '\0'){
+   if(BufferTemp[0] == '\n' && *Buffer != '\0'){
      AsciiStrToUnicodeStr(Buffer, Buffer16);
      Print(L"Buffer: %s\n", Buffer16);
       Status = File->Open(
@@ -108,7 +110,7 @@ while(1){
                 0);
       if (EFI_ERROR(Status)) {
           Print(L"Could not open File : %r\n", Status);
-          goto close_filePath;
+          goto close_file;
       }
       else{
         Status = FPath->Delete(FPath);
@@ -123,12 +125,8 @@ while(1){
      AsciiStrCat(Buffer, BufferTemp);
    }
 
-   if(BufferSize == 0)
-        break;
-}
 
-close_filePath:
-    FPath->Close(FPath);
+}
 
 close_file:
     File->Close(File);

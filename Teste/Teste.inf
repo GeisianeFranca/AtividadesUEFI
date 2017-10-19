@@ -1,14 +1,14 @@
 [Defines]
   INF_VERSION = 0x00010005
-  BASE_NAME = LerImagem
-  FILE_GUID = 31fba816-31af-4caa-874d-ca6535afdd80
+  BASE_NAME = Teste
+  FILE_GUID = 479e4870-3b71-452a-923d-906b57ba5f84
   MODULE_TYPE = UEFI_APPLICATION
   VERSION_STRING = 1.0
   UEFI_SPECIFICATION_VERSION = 0x0002001E
-  ENTRY_POINT = UefiMain
+  ENTRY_POINT = Main
 
 [Sources]
-  LerImagem.c
+  Teste.c
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -27,7 +27,6 @@
 [Protocols]
   gEfiSimpleFileSystemProtocolGuid
   gNtfsProtocolGuid
-  gEfiLoadedImageProtocolGuid
 
 [Guids]
     gEfiFileInfoGuid

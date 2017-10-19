@@ -6,6 +6,37 @@
 #include <Guid/FileInfo.h>
 #include <Library/MemoryAllocationLib.h>
 UINTN qtdeFiles= 0;
+
+VOID CIN(CHAR16* text){
+  EFI_STATUS  Status;
+  UINTN Index;
+  UINTN cont = 0;
+  EFI_INPUT_KEY Key;
+
+    while(Key.UnicodeChar!=13 || cont == 0){
+      Status = gBS->WaitForEvent (1, &gST->ConIn->WaitForKey, &Index);
+      if (EFI_ERROR (Status) ) {
+        Print(L"%r\n", Status);
+      }
+
+      gST->ConIn->ReadKeyStroke(gST->ConIn, &Key);
+
+      if(Key.UnicodeChar == 8){
+        cont--;
+        Print(L"%c", Key.UnicodeChar);
+        continue;
+      }
+
+        text[cont] = Key.UnicodeChar;
+        cont++;
+        Print(L"%c", Key.UnicodeChar);
+
+
+    }
+
+  text[cont-1] = '\0';
+}
+
 VOID Verifica(EFI_FILE_PROTOCOL *File, CHAR16 *Name, CHAR16 *Path){
   EFI_FILE_PROTOCOL* FileAux = NULL;
   CHAR16 *Temp = AllocateZeroPool(512*sizeof(CHAR16));
@@ -37,6 +68,7 @@ VOID Verifica(EFI_FILE_PROTOCOL *File, CHAR16 *Name, CHAR16 *Path){
       }
       Verifica(FileAux,Name, StrCat(Temp, L"/"));
     }else{
+      Print(L"%s %s\n",Name, Buffer->FileName);
        if(StrCmp(Buffer->FileName, Name) == 0){
          Print(L"%s\n", Temp);
          qtdeFiles++;
@@ -64,6 +96,8 @@ UefiMain (
   EFI_HANDLE *BufferHandle = NULL;
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystem = NULL;
   EFI_FILE_PROTOCOL *RootDir = NULL;
+  //EFI_SIMPLE_TEXT_INPUT_PROTOCOL *Text= AllocateZeroPool(sizeof(CHAR16));
+  CHAR16 *Text = AllocateZeroPool(sizeof(CHAR16)*100);
   //EFI_FILE_PROTOCOL *File = NULL;
   //UINTN BufferSize = SIZE_OF_EFI_FILE_INFO + 512*sizeof(CHAR16);
 
@@ -98,9 +132,12 @@ UefiMain (
           Print(L"Could not open root dir: %r\n", Status);
           goto close_fs;
       }
-      CHAR16* Archive = L"WriteTeste.efi\0";
+      CIN(Text);
+      Print(L"\n");
+      Print(L"Ret: %s\n", Text);
+      //CHAR16* Name = L"WriteTeste.efi\0";
       CHAR16* Path = L"/\0";
-      Verifica(RootDir, Archive, Path);
+      Verifica(RootDir, Text, Path);
       Print(L"%d files found.\n",qtdeFiles);
       // Status = RootDir->Open(
       //         RootDir,
@@ -121,9 +158,9 @@ UefiMain (
       // }
     }
 
-    if(Status == EFI_NOT_FOUND)
+    if(Status == EFI_NOT_FOUND){
       Print(L"%r\n", Status);
-
+    }
 close_fs:
   gBS->CloseProtocol(
       BufferHandle,

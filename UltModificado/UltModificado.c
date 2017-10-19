@@ -67,7 +67,7 @@ VOID Verifica(EFI_FILE_PROTOCOL *File, EFI_FILE_INFO *LastModification){
       if(EFI_ERROR(Status)){
         goto close_file;
       }
-    
+
 
       Verifica(FileAux, LastModification);
     }else{
@@ -132,6 +132,7 @@ UefiMain (
           Print(L"Could not open root dir: %r\n", Status);
           goto close_fs;
       }
+      //Status = RootDir->Open(RootDir,&RootDir, L"RC", EFI_FILE_MODE_READ, 0);
         Verifica(RootDir, LastModification);
     }
 

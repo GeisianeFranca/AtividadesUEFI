@@ -1,6 +1,6 @@
 [Defines]
   PLATFORM_NAME = TesteUefiPkg
-  PLATFORM_GUID = fd244ccc-059c-4a21-b490-2080d68d6fbf
+  PLATFORM_GUID = 84d120d9-d01a-4fa0-beec-144423230680
   PLATFORM_VERSION = 0.1
   DSC_SPECIFICATION = 0x00010005
   OUTPUT_DIRECTORY = Build/TesteUefiPkg
@@ -30,3 +30,6 @@
   TesteUefiPkg/UltModificado/UltModificado.inf
   TesteUefiPkg/LsRecursivo/LsRecursivo.inf
   TesteUefiPkg/FindRecursivo/FindRecursivo.inf
+  TesteUefiPkg/LerImagem/LerImagem.inf
+  TesteUefiPkg/Teste/Teste.inf
+  TesteUefiPkg/Hash/Hash.inf
