@@ -21,6 +21,8 @@
   DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
   UefiRuntimeServicesTableLib|MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
   UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
+  HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
+  UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
 
 [Components]
   TesteUefiPkg/Applications/MyApplication.inf
@@ -33,3 +35,4 @@
   TesteUefiPkg/LerImagem/LerImagem.inf
   TesteUefiPkg/Teste/Teste.inf
   TesteUefiPkg/Hash/Hash.inf
+  TesteUefiPkg/Applications/Hii/Hii.inf

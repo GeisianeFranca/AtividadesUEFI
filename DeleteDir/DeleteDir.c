@@ -110,7 +110,6 @@ while(1){
                 0);
       if (EFI_ERROR(Status)) {
           Print(L"Could not open File : %r\n", Status);
-          goto close_file;
       }
       else{
         Status = FPath->Delete(FPath);

@@ -1,0 +1,36 @@
+[Defines]
+  INF_VERSION                     = 0x00010005
+  BASE_NAME                       = TesteHII
+  FILE_GUID                       = 62309580-6a5d-40d7-9117-9e5ca692062d
+  MODULE_TYPE                     = UEFI_APPLICATION
+  VERSION_STRING                  = 1.0
+  ENTRY_POINT                     = UefiMain
+
+[Sources.common]
+  Hii.h
+  HiiT.c
+  Hii.uni
+  Hii.vfr
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiLib
+  UefiApplicationEntryPoint
+  PrintLib
+  HiiLib
+  UefiHiiServicesLib
+
+[Guids]
+  gEfiIfrTianoGuid                              ## CONSUMES ## GUID (Extended IFR Guid Opcode)
+  gEfiHiiPlatformSetupFormsetGuid               ## CONSUMES ## GUID (Indicate the formset class guid to be displayed)
+  gEfiHiiDriverHealthFormsetGuid                ## CONSUMES ## GUID (Indicate the Driver Health formset class guid to be displayed)
+
+[Protocols]
+  gEfiGraphicsOutputProtocolGuid                ## PROTOCOL SOMETIMES_CONSUMES
+  gEfiHiiStringProtocolGuid                     ## PROTOCOL CONSUMES
+  gEfiFormBrowser2ProtocolGuid                  ## PROTOCOL CONSUMES
+  gEfiHiiDatabaseProtocolGuid                   ## CONSUMES

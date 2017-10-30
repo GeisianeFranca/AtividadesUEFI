@@ -1,0 +1,9 @@
+#include "Hii.h"
+formset
+  guid     = HII_TEST_FORM_GUID,
+  title    = STRING_TOKEN(STR_HIITEST_FORM_SET_TITLE),
+  help     = STRING_TOKEN(STR_HIITEST_FORM_SET_HELP),
+  form formid = 1,
+    title  = STRING_TOKEN(STR_HIITEST_FORM_SET_TITLE);
+  endform;
+endformset;

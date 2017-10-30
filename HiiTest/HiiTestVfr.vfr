@@ -1,0 +1,81 @@
+// *++
+//
+// Module Name:
+//
+//   HiiTestVfr.vfr
+//
+// Abstract:
+//
+//   HII Test Form.
+//
+// Revision History:
+//
+// --*/
+
+//#define HII_TEST_FORM_GUID    { 0x1BA9A291, 0xB110, 0x4F08, 0xA8, 0x73, 0xA8, 0x22, 0x37, 0x71, 0xA9, 0x55 }
+#include "HiiTestData.h"
+#include "StructTestHii.h"
+
+#define LABEL_UPDATE_BBS            0x2222
+
+// EFI Variable attributes
+//
+#define EFI_VARIABLE_NON_VOLATILE       0x00000001
+#define EFI_VARIABLE_BOOTSERVICE_ACCESS 0x00000002
+#define EFI_VARIABLE_RUNTIME_ACCESS     0x00000004
+#define EFI_VARIABLE_READ_ONLY          0x00000008
+
+formset
+  guid     = HII_TEST_FORM_GUID,
+  title    = STRING_TOKEN(STR_HIITEST_FORM_SET_TITLE),
+  help     = STRING_TOKEN(STR_HIITEST_FORM_SET_HELP),
+
+  // Define a Buffer Storage (EFI_IFR_VARSTORE)
+  varstore TESTE_CHECK, //tipo da estrutura
+  //varid = CONFIGURATION_VARSTORE_ID,
+  name = Teste,
+  guid = HII_TEST_FORM_GUID;
+
+  efivarstore TESTE_CHECK,
+  attribute = EFI_VARIABLE_BOOTSERVICE_ACCESS,
+  name =  EfiData,
+  guid =  HII_TEST_FORM_GUID;
+
+
+
+  form formid = 1,
+    title  = STRING_TOKEN(STR_HIITEST_GPIOTEST_FORM_TITLE);
+    subtitle text= STRING_TOKEN(STR_HIITEST_VERSION_TEXT);
+
+    goto 2,
+      prompt = STRING_TOKEN(STR_HIITEST_VERSION_TEXT), //SecondSetupPage  // this too has no end-op and basically it's a jump to a form ONLY
+      help   = STRING_TOKEN(STR_HIITEST_VERSION_HELP);
+
+  endform;
+  form formid = 2,
+    title  = STRING_TOKEN(STR_HIITEST_GPIOTEST_FORM_TITLE);
+    subtitle text= STRING_TOKEN(STR_HIITEST_VERSION_TEXT);
+
+    checkbox
+        varid   = EfiData.value1,
+        questionid = 0xcb,
+         prompt   = STRING_TOKEN(STR_CHECKBOX),
+         help     = STRING_TOKEN(STR_CHECKBOX),
+
+         flags    = CHECKBOX_DEFAULT | INTERACTIVE,
+         default  = FALSE,
+         nosubmitif prompt = STRING_TOKEN(STR_NO_CHECKBOX),
+          ideqval EfiData.value1 == 2007
+          endif
+    endcheckbox;
+    checkbox
+
+         prompt   = STRING_TOKEN(STR_CHECKBOX),
+         help     = STRING_TOKEN(STR_CHECKBOX),
+
+         flags    = CHECKBOX_DEFAULT | INTERACTIVE,
+         default  = TRUE,
+    endcheckbox;
+  endform;
+
+endformset;

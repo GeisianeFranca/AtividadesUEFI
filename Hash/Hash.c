@@ -14,5 +14,6 @@ UefiMain (
     IN EFI_SYSTEM_TABLE  *SystemTable
 )
 {
-    return Status;
+  EFI_STATUS Status = EFI_SUCCESS;
+  return Status;
 }

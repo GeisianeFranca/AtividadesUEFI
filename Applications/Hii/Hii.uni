@@ -1,0 +1,18 @@
+#langdef en-US "English"
+#langdef fr-FR "Francais"
+
+
+#string STR_HIITEST_FORM_SET_TITLE     	   #language en-US  "Read Image"
+										                       #language fr-FR  "Lire l'image"
+
+#string STR_HIITEST_FORM_SET_TEXT      	   #language en-US  "Image Name"
+										                       #language fr-FR  "Nom de l'image"
+
+#string STR_HIITEST_FORM_SET_HELP      	   #language en-US  "Image Name"
+										                       #language fr-FR  "Nom de l'image"
+
+#string STR_HIITEST_ESC                    #language en-US  "Press ESC to exit."
+                                           #language fr-FR  "Appuyez sur ESC pour quitter"
+
+#string STR_HIITEST_NULL                   #language en-US  ""
+                                           #language fr-FR  ""
