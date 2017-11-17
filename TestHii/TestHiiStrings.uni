@@ -1,0 +1,7 @@
+#langdef en-US "English"
+
+#string STR_FORMSET_TITLE		     #language en-US "Test HII"
+#string STR_FORMSET_HELP		     #language en-US "Help Formset"
+#string STR_FORM_TITLE  		     #language en-US "Title1"
+#string STR_FORM_CHECKBOX		     #language en-US "Checkbox"
+#string STR_FORM_CHECKBOX_HELP	 #language en-US "Checkbox Help"

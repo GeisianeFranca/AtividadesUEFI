@@ -1,0 +1,21 @@
+#include "TestHiiData.h"
+formset
+  guid  = TEST_HII_FORMSET_GUID,
+  title = STRING_TOKEN(STR_FORMSET_TITLE),
+  help  = STRING_TOKEN(STR_FORMSET_HELP),
+
+  varstore DATA_CONFIGURATION,
+    name = Config,
+    guid = TEST_HII_FORMSET_GUID;
+
+  form formid = 1,
+    title = STRING_TOKEN(STR_FORM_TITLE);
+
+    checkbox
+      varid  = Config.Checkbox,
+      prompt = STRING_TOKEN(STR_FORM_CHECKBOX),
+      help   = STRING_TOKEN(STR_FORM_CHECKBOX_HELP),
+      default = TRUE,
+    endcheckbox;
+  endform;
+endformset;
